@@ -68,8 +68,8 @@ foreach ($values as &$row) {
     $row = array_values($row); // 連想配列を数値インデックスの配列に戻す
 
     // StartとEndのカラムを日付に変換
-    $row[9] = date('Y-m-d H:i:s', $unixTimestampOf1900Jan1 + ($row[9]-1) * 86400);
-    $row[10] = date('Y-m-d H:i:s', $unixTimestampOf1900Jan1 + ($row[10]-1) * 86400);
+    $row[9] = date('Y-m-d H:i:s', $unixTimestampOf1900Jan1 + ($row[9]-2) * 86400);
+    $row[10] = date('Y-m-d H:i:s', $unixTimestampOf1900Jan1 + ($row[10]-2) * 86400);
 }
 var_dump($values);
 
@@ -99,7 +99,7 @@ foreach ($values as $row) {
     $alid = $row[2];
 
     // EntryType="Full Delete"の場合は削除
-    if ($row['EntryType'] === 'Full Delete') {
+    if ($row[0] === 'Full Delete') {
         $check_sql = "SELECT COUNT(*) FROM avails_an_table WHERE ALID = ?";
         $check_stmt = $pdo->prepare($check_sql);
         $check_stmt->execute([$alid]);
@@ -111,21 +111,21 @@ foreach ($values as $row) {
             exit('ALIDが見つかりません');
         }
         continue; // 次のレコードへ
-    }
+    } else{
 
-    // 重複チェック
-    $check_sql = "SELECT COUNT(*) FROM avails_an_table WHERE ALID = ?";
-    $check_stmt = $pdo->prepare($check_sql);
-    $check_stmt->execute([$alid]);
-    $count = $check_stmt->fetchColumn();
+        // 重複チェック
+        $check_sql = "SELECT COUNT(*) FROM avails_an_table WHERE ALID = ?";
+        $check_stmt = $pdo->prepare($check_sql);
+        $check_stmt->execute([$alid]);
+        $count = $check_stmt->fetchColumn();
 
-    if ($count > 0) {
-        // 重複する場合: 更新処理
-        $stmt_update->execute(array_merge([$file_name, $currentDate], $row, [$alid]));
-    } else {
-        // 重複しない場合: 挿入処理
-        // var_dump(array_merge([$file_name, $currentDate], $row));
-        $stmt->execute(array_merge([$file_name, $currentDate], $row));
+        if ($count > 0) {
+            // 重複する場合: 更新処理
+            $stmt_update->execute(array_merge([$file_name, $currentDate], $row, [$alid]));
+        } else {
+            // 重複しない場合: 挿入処理
+            $stmt->execute(array_merge([$file_name, $currentDate], $row));
+        }
     }
 }
 
