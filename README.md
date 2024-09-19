@@ -14,6 +14,11 @@ https://docomo-tech-tkn.sakura.ne.jp/09_PHP3/index.php
 ## ④作ったアプリケーション用のIDまたはPasswordがある場合
 
 - なし
+- 入力サンプルファイルで動作確認可能です
+  ※キー：AQ列のALID
+  新規登録：DBにALIDが存在しない & G列EntryType＝Full Extract
+  更新　　：DBにALIDが存在する & G列EntryType＝Full Extract
+  削除　　：DBにALIDが存在する & G列EntryType＝Full Delete
   
 ## ⑤工夫した点・こだわった点
 
